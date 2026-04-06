@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BOSH Management System</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body, #app { height: 100%; }
+    body { font-family: 'Poppins', sans-serif; margin: 0; }
+    .font-display { font-family: 'Poppins', sans-serif; font-weight: 700; }
+    .sidebar-link { transition: all 0.2s ease; }
+    .sidebar-link:hover, .sidebar-link.active { background: rgba(255,255,255,0.15); }
+    .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(34,197,94,0.15); }
+    .fade-in { animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    input, select, textarea { font-family: 'Poppins', sans-serif; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #22c55e; border-radius: 3px; }
+    .progress-bar { background: linear-gradient(90deg, #22c55e, #16a34a); }
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 600; }
+    .badge-paid { background: #dcfce7; color: #166534; }
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    .badge-overdue { background: #fee2e2; color: #991b1b; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full">
+  <div id="app" class="flex h-full w-full" style="background:#f8fafc;">
+   <!-- Sidebar -->
+   <aside class="w-64 flex-shrink-0 flex flex-col overflow-hidden" style="background:linear-gradient(180deg,#22c55e 0%,#16a34a 100%);color:#fff;">
+    <div class="p-6 border-b border-white/20">
+     <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center text-2xl" style="background:rgba(255,255,255,0.2);">
+       🏢
+      </div>
+      <div>
+       <h1 class="font-display text-white text-lg font-bold">BOSH</h1>
+       <p class="text-green-100 text-xs mt-0.5">Management System</p>
+      </div>
+     </div>
+    </div>
+    <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
+     <button onclick="switchTab('budget')" data-tab="budget" class="sidebar-link active w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/90 text-sm font-medium hover:text-white"> <i data-lucide="wallet" style="width:18px;height:18px;"></i> Monthly Budget </button> 
+     <button onclick="switchTab('expenditure')" data-tab="expenditure" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/90 text-sm font-medium hover:text-white"> <i data-lucide="trending-down" style="width:18px;height:18px;"></i> Monthly Expenditure </button> 
+     <button onclick="switchTab('shopping')" data-tab="shopping" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/90 text-sm font-medium hover:text-white"> <i data-lucide="shopping-bag" style="width:18px;height:18px;"></i> Household Shopping </button> 
+     <button onclick="switchTab('employees')" data-tab="employees" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/90 text-sm font-medium hover:text-white"> <i data-lucide="briefcase" style="width:18px;height:18px;"></i> Employee Records </button> 
+     <button onclick="switchTab('members')" data-tab="members" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/90 text-sm font-medium hover:text-white"> <i data-lucide="users" style="width:18px;height:18px;"></i> Members Record </button> 
+     <button onclick="switchTab('equipment')" data-tab="equipment" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/90 text-sm font-medium hover:text-white"> <i data-lucide="tool" style="width:18px;height:18px;"></i> Farm Equipment </button> 
+     <button onclick="switchTab('cars')" data-tab="cars" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/90 text-sm font-medium hover:text-white"> <i data-lucide="car" style="width:18px;height:18px;"></i> Cars </button> 
+     <button onclick="switchTab('expenses')" data-tab="expenses" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/90 text-sm font-medium hover:text-white"> <i data-lucide="receipt" style="width:18px;height:18px;"></i> Expense Tracker </button> 
+     <button onclick="switchTab('bills')" data-tab="bills" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/90 text-sm font-medium hover:text-white"> <i data-lucide="check-circle" style="width:18px;height:18px;"></i> Bill Pay Checklist </button> 
+     <button onclick="switchTab('savings')" data-tab="savings" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/90 text-sm font-medium hover:text-white"> <i data-lucide="piggy-bank" style="width:18px;height:18px;"></i> Savings Tracker </button> 
+     <button onclick="switchTab('inventory')" data-tab="inventory" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/90 text-sm font-medium hover:text-white"> <i data-lucide="package" style="width:18px;height:18px;"></i> Inventory Lists </button>
+    </nav>
+   </aside>
+   <!-- Main Content -->
+   <main class="flex-1 flex flex-col overflow-hidden">
+    <header class="bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between">
+     <h2 id="page-title" class="font-display text-2xl text-gray-800">Monthly Budget</h2>
+    </header>
+    <div class="flex-1 overflow-auto p-8">
+     <!-- All your tab content stays exactly the same -->
+     <!-- Monthly Budget Tab -->
+     <div id="budget-content" class="tab-content fade-in">
+      <div class="max-w-6xl mx-auto">
+       <h3 class="font-display text-xl text-gray-700 mb-6">Monthly Budget Overview</h3>
+       <div class="grid grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow p-6 card-hover">
+         <p class="text-gray-600 text-sm mb-2">Total Budget</p>
+         <p id="total-budget" class="font-display text-3xl text-green-600">$0</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 card-hover">
+         <p class="text-gray-600 text-sm mb-2">Total Spent</p>
+         <p id="total-spent" class="font-display text-3xl text-red-600">$0</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 card-hover">
+         <p class="text-gray-600 text-sm mb-2">Remaining</p>
+         <p id="remaining-budget" class="font-display text-3xl text-blue-600">$0</p>
+        </div>
+       </div>
+       <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h4 class="font-display text-lg text-gray-700 mb-4">Set Monthly Budget</h4>
+        <div class="flex gap-4">
+         <input type="number" id="budget-input" placeholder="Enter budget amount" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"> 
+         <button onclick="setBudget()" class="px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700">Set Budget</button>
+        </div>
+       </div>
+       <div class="bg-white rounded-lg shadow p-6">
+        <h4 class="font-display text-lg text-gray-700 mb-4">Spending Status</h4>
+        <div id="budget-status" class="text-lg text-gray-600">No budget set yet</div>
+       </div>
+      </div>
+     </div>
+     <!-- Monthly Expenditure Tab -->
+     <div id="expenditure-content" class="tab-content fade-in hidden">
+      <div class="max-w-6xl mx-auto">
+       <h3 class="font-display text-xl text-gray-700 mb-6">Monthly Expenditure</h3>
+       <div class="bg-white rounded-lg shadow p-6">
+        <h4 class="font-display text-lg text-gray-700 mb-4">Spending Breakdown</h4>
+        <canvas id="expenditureChart" style="max-height: 400px;"></canvas>
+       </div>
+      </div>
+     </div>
+     <!-- Household Shopping Tab -->
+     <div id="shopping-content" class="tab-content fade-in hidden">
+      <div class="max-w-6xl mx-auto">
+       <h3 class="font-display text-xl text-gray-700 mb-6">Household Shopping</h3>
+       <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h4 class="font-display text-lg text-gray-700 mb-4">Add New Item</h4>
+        <div class="grid grid-cols-3 gap-4 mb-4">
+         <input type="text" id="shopping-item" placeholder="Item name" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"> 
+         <input type="number" id="shopping-quantity" placeholder="Quantity" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"> 
+         <input type="number" id="shopping-price" placeholder="Price" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+        </div>
+        <button onclick="addShoppingItem()" class="w-full px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700">Add Item</button>
+       </div>
+       <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="w-full">
+         <thead class="bg-gray-100 border-b">
+          <tr>
+           <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Item</th>
+           <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Quantity</th>
+           <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Price</th>
+           <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Total</th>
+           <th class="px-6 py-3 text-center text-sm font-medium text-gray-700">Action</th>
+          </tr>
+         </thead>
+         <tbody id="shopping-list"></tbody>
+        </table>
+       </div>
+      </div>
+     </div>
+     <!-- Employee Records Tab -->
+     <div id="employees-content" class="tab-content fade-in hidden">
+      <div class="max-w-6xl mx-auto">
+       <h3 class="font-display text-xl text-gray-700 mb-6">Employee Records</h3>
+       <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h4 class="font-display text-lg text-gray-700 mb-4">Add New Employee</h4>
+        <div class="grid grid-cols-3 gap-4 mb-4">
+         <input type="text" id="employee-name" placeholder="Employee name" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"> 
+         <input type="text" id="employee-number" placeholder="Employee number" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"> 
+         <input type="text" id="employee-position" placeholder="Position" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+        </div>
+        <button onclick="addEmployee()" class="w-full px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700">Add Employee</button>
+       </div>
+       <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="w-full">
+         <thead class="bg-gray-100 border-b">
+          <tr>
+           <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Name</th>
+           <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Employee Number</th>
+           <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Position</th>
+           <th class="px-6 py-3 text-center text-sm font-medium text-gray-700">Action</th>
+          </tr>
+         </thead>
+         <tbody id="employees-list"></tbody>
+        </table>
+       </div>
+      </div>
+     </div>
+     <!-- Members Record Tab -->
+     <div id="members-content" class="tab-content fade-in hidden">
+      <div class="max-w-6xl mx-auto">
+       <h3 class="font-display text-xl text-gray-700 mb-6">Members Record</h3>
+       <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h4 class="font-display text-lg text-gray-700 mb-4">Add New Member</h4>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+         <input type="text" id="member-name" placeholder="Member name" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"> 
+         <input type="text" id="member-number" placeholder="Member number/ID" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+        </div>
+        <button onclick="addMember()" class="w-full px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700">Add Member</button>
+       </div>
+       <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="w-full">
+         <thead class="bg-gray-100 border-b">
+          <tr>
+           <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Name</th>
+           <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Member Number</th>
+           <th class="px-6 py-3 text-center text-sm font-medium text-gray-700">Action</th>
+          </tr>
+         </thead>
+         <tbody id="members-list"></tbody>
+        </table>
+       </div>
+      </div>
+     </div>
+     <!-- Farm Equipment Tab -->
+     <div id="equipment-content" class="tab-content fade-in hidden">
+      <div class="max-w-6xl mx-auto">
+       <h3 class="font-display text-xl text-gray-700 mb-6">Farm Equipment</h3>
+       <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h4 class="font-display text-lg text-gray-700 mb-4">Add New Equipment</h4>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+         <input type="text" id="equipment-type" placeholder="Equipment type" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"> 
+         <select id="equipment-condition" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="">Select condition</option>
+          <option value="Excellent">Excellent</option>
+          <option value="Good">Good</option>
+          <option value="Fair">Fair</option>
+          <option value="Poor">Poor</option>
+         </select>
+        </div>
+        <button onclick="addEquipment()" class="w-full px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700">Add Equipment</button>
+       </div>
+       <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class
